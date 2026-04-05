@@ -189,6 +189,132 @@ export const mockTransactions = [
     amount: 149,
     type: "expense",
     paymentMethod: "Debit Card"
+  },
+  {
+    id: 22,
+    date: "2026-02-03",
+    description: "Rapido Bike Ride",
+    category: "Transport",
+    amount: 149,
+    type: "expense",
+    paymentMethod: "Phonepe"
+  },
+  {
+    id: 23,
+    date: "2026-02-04",
+    description: "Restaurant Bill",
+    category: "Food & Groceries",
+    amount: 150,
+    type: "expense",
+    paymentMethod: "Phonepe"
+  },
+  {
+    id: 24,
+    date: "2025-12-31",
+    description: "Salary Deposited",
+    category: "Income",
+    amount: 95000,
+    type: "income",
+    paymentMethod: "Bank Transfer"
+  },
+  {
+    id: 25,
+    date: "2025-12-26",
+    description: "Blinkit Shopping",
+    category: "Food & Groceries",
+    amount: 200,
+    type: "expense",
+    paymentMethod: "Phonepe"
+  },
+  {
+    id: 26,
+    date: "2025-12-15",
+    description: "INOX movie Tickets",
+    category: "Entertainment",
+    amount: 349,
+    type: "expense",
+    paymentMethod: "Amazon pay"
+  },
+  {
+    id: 27,
+    date: "2025-12-03",
+    description: "train ticket",
+    category: "Transport",
+    amount: 290,
+    type: "expense",
+    paymentMethod: "Phonepe"
+  },
+  {
+    id: 28,
+    date: "2025-11-28",
+    description: "Freelance project payment",
+    category: "Income",
+    amount: 20000,
+    type: "income",
+    paymentMethod: "Bank Transfer"
+  },
+  {
+    id: 29,
+    date: "2025-11-04",
+    description: "Electricity Bill",
+    category: "Utilities",
+    amount: 1500,
+    type: "expense",
+    paymentMethod: "Amazon pay"
+  },
+  {
+    id: 30,
+    date: "2025-11-02",
+    description: "Kake di hatti restaurant",
+    category: "Food & Groceries",
+    amount: 600,
+    type: "expense",
+    paymentMethod: "Amazon pay"
+  },
+  {
+    id: 31,
+    date: "2025-10-05",
+    description: "Smartwatch health tracker",
+    category: "Health & Fitness",
+    amount: 1999,
+    type: "expense",
+    paymentMethod: "Phonepe"
+  },
+  {
+    id: 32,
+    date: "2025-10-05",
+    description: "Vmart Shopping",
+    category: "Shopping",
+    amount: 1250,
+    type: "expense",
+    paymentMethod: "Phonepe"
+  },
+  {
+    id: 33,
+    date: "2025-10-05",
+    description: "Interest Income",
+    category: "Income",
+    amount: 22,
+    type: "income",
+    paymentMethod: "Bank Transfer"
+  },
+  {
+    id: 34,
+    date: "2025-10-05",
+    description: "Banaras Trip",
+    category: "Entertainment",
+    amount: 5000,
+    type: "expense",
+    paymentMethod: "Phonepe"
+  },
+  {
+    id: 35,
+    date: "2025-09-07",
+    description: "Mobile Recharge Payment",
+    category: "Utilities",
+    amount: 349,
+    type: "expense",
+    paymentMethod: "Phonepe"
   }
 ];
 

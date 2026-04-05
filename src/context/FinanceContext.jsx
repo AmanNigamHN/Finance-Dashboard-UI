@@ -1,6 +1,17 @@
 import React, { createContext, useState, useCallback, useEffect } from "react";
 import { mockTransactions } from "../data/mockData";
 
+export const DEFAULT_TRANSACTION_FILTERS = {
+  category: "all",
+  type: "all",
+  searchTerm: "",
+  monthFilter: "all",
+  amountMin: "",
+  amountMax: "",
+  dateFrom: "",
+  dateTo: "",
+  paymentMethod: "all",
+};
 
 export const FinanceContext = createContext();
 
@@ -28,12 +39,7 @@ export const FinanceProvider = ({ children }) => {
   const [transactions, setTransactions] = useState(getInitialTransactions());
   const [userRole, setUserRole] = useState("viewer");
   const [isDarkMode, setIsDarkMode] = useState(getInitialDarkMode());
-  const [filters, setFilters] = useState({
-    category: "all",
-    type: "all",
-    searchTerm: '',
-    monthFilter: "all"
-  });
+  const [filters, setFilters] = useState(() => ({ ...DEFAULT_TRANSACTION_FILTERS }));
   const [sortBy, setSortBy] = useState("date");
   const [sortOrder, setSortOrder] = useState("desc");
 
@@ -82,21 +88,52 @@ export const FinanceProvider = ({ children }) => {
       const now = new Date();
       const currentMonth = now.getMonth();
       const currentYear = now.getFullYear();
-      filtered = filtered.filter(tx => {
-        const txDate = new Date(tx.date);
-        const txMonth = txDate.getMonth();
-        const txYear = txDate.getFullYear();
+      filtered = filtered.filter((tx) => {
+        if (!tx.date || tx.date.length < 7) return false;
         if (filters.monthFilter === "thisMonth") {
-          return txMonth === currentMonth && txYear === currentYear;
-        } else if (filters.monthFilter === "previousMonth") {
+          const txDate = new Date(tx.date);
+          return (
+            txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear
+          );
+        }
+        if (filters.monthFilter === "previousMonth") {
+          const txDate = new Date(tx.date);
           const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
           const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-          return txMonth === prevMonth && txYear === prevYear;
+          return txDate.getMonth() === prevMonth && txDate.getFullYear() === prevYear;
+        }
+        if (/^\d{4}-\d{2}$/.test(filters.monthFilter)) {
+          return tx.date.slice(0, 7) === filters.monthFilter;
         }
         return true;
       });
     }
 
+    if (filters.amountMin !== "") {
+      const min = Number(filters.amountMin);
+      if (!Number.isNaN(min)) {
+        filtered = filtered.filter((tx) => Number(tx.amount) >= min);
+      }
+    }
+
+    if (filters.amountMax !== "") {
+      const max = Number(filters.amountMax);
+      if (!Number.isNaN(max)) {
+        filtered = filtered.filter((tx) => Number(tx.amount) <= max);
+      }
+    }
+
+    if (filters.dateFrom) {
+      filtered = filtered.filter((tx) => tx.date >= filters.dateFrom);
+    }
+
+    if (filters.dateTo) {
+      filtered = filtered.filter((tx) => tx.date <= filters.dateTo);
+    }
+
+    if (filters.paymentMethod !== "all") {
+      filtered = filtered.filter((tx) => tx.paymentMethod === filters.paymentMethod);
+    }
 
     filtered.sort((a, b) => {
       let compareValue = 0;
@@ -161,6 +198,19 @@ export const FinanceProvider = ({ children }) => {
     return categories.sort();
   }, [transactions]);
 
+  const getPaymentMethods = useCallback(() => {
+    const methods = [
+      ...new Set(
+        transactions.map((tx) => tx.paymentMethod).filter(Boolean)
+      ),
+    ];
+    return methods.sort((a, b) => a.localeCompare(b));
+  }, [transactions]);
+
+  const resetFilters = useCallback(() => {
+    setFilters({ ...DEFAULT_TRANSACTION_FILTERS });
+  }, []);
+
 
   const exportToCSV = useCallback(() => {
     const filtered = getFilteredTransactions();
@@ -170,26 +220,43 @@ export const FinanceProvider = ({ children }) => {
       return;
     }
 
+    // ISO YYYY-MM-DD avoids Excel mis-reading M/D/Y vs D/M/Y; #### often appears when
+    // Excel stores a serial date and the column is too narrow — ISO stays unambiguous.
+    const toIsoDateOnly = (raw) => {
+      if (typeof raw === "string" && /^\d{4}-\d{2}-\d{2}$/.test(raw.trim())) {
+        return raw.trim();
+      }
+      const d = new Date(raw);
+      if (Number.isNaN(d.getTime())) return String(raw);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    };
+
+    const escapeCsvCell = (value) => {
+      const s = String(value);
+      if (/[",\n\r]/.test(s)) {
+        return `"${s.replace(/"/g, '""')}"`;
+      }
+      return s;
+    };
 
     const headers = ["Date", "Description", "Category", "Amount", "Type"];
-    
 
-    const rows = filtered.map(tx => [
-      new Date(tx.date).toLocaleDateString('en-US'),
-      `"${tx.description}"`,
-      tx.category,
-      tx.amount.toFixed(2),
-      tx.type
+    const rows = filtered.map((tx) => [
+      toIsoDateOnly(tx.date),
+      escapeCsvCell(tx.description),
+      escapeCsvCell(tx.category),
+      Number(tx.amount).toFixed(2),
+      escapeCsvCell(tx.type),
     ]);
 
+    const csvBody = [headers.join(","), ...rows.map((row) => row.join(","))].join("\r\n");
+    // UTF-8 BOM helps Excel on Windows detect encoding for descriptions with special characters
+    const csvContent = `\uFEFF${csvBody}`;
 
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.join(','))
-    ].join('\n');
-
-
-    const blob = new Blob([csvContent], { type: "text/csv" });
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -229,6 +296,8 @@ export const FinanceProvider = ({ children }) => {
     setSortBy,
     setSortOrder,
     getCategories,
+    getPaymentMethods,
+    resetFilters,
     setIsDarkMode,
     exportToCSV,
     resetData

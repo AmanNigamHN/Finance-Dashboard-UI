@@ -28,6 +28,27 @@
   margin: 0;
 }
 
+[data-theme="dark"] .role-label,
+[data-theme="dark"] .role-info {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .role-btn {
+  background: #11121e;
+  color: #ffffff;
+  border-color: #4f5ce1;
+}
+
+[data-theme="dark"] .role-btn:hover {
+  background: #1a1a2e;
+}
+
+[data-theme="dark"] .role-btn.active {
+  background: #667eea;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
 .role-buttons {
   display: flex;
   gap: 10px;

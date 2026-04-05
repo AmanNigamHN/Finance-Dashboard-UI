@@ -1,17 +1,34 @@
-import React, { useState } from "react";
-import { useFinance } from "../context/FinanceContext";
+import React, { useState, useMemo } from "react";
+import { useFinance, DEFAULT_TRANSACTION_FILTERS } from "../context/FinanceContext";
 import "../styles/TransactionList.css";
+
+const formatYearMonthLabel = (ym) => {
+  const [y, m] = ym.split("-");
+  const d = new Date(Number(y), Number(m) - 1, 1);
+  return d.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+};
+
+const uniqueYearMonthsFromTransactions = (txs) => {
+  const set = new Set();
+  txs.forEach((tx) => {
+    if (tx.date && tx.date.length >= 7) set.add(tx.date.slice(0, 7));
+  });
+  return Array.from(set).sort().reverse();
+};
 
 const TransactionList = () => {
   const {
+    transactions,
     getFilteredTransactions,
     filters,
     updateFilters,
+    resetFilters,
     sortBy,
     sortOrder,
     setSortBy,
     setSortOrder,
     getCategories,
+    getPaymentMethods,
     userRole,
     deleteTransaction,
     editTransaction,
@@ -22,9 +39,34 @@ const TransactionList = () => {
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
   const [showForm, setShowForm] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   const filteredTransactions = getFilteredTransactions();
   const categories = getCategories();
+  const paymentMethods = getPaymentMethods();
+
+  const availableMonths = useMemo(
+    () => uniqueYearMonthsFromTransactions(transactions),
+    [transactions]
+  );
+
+  const advancedActiveCount = useMemo(() => {
+    let n = 0;
+    if (filters.amountMin !== "") n += 1;
+    if (filters.amountMax !== "") n += 1;
+    if (filters.dateFrom) n += 1;
+    if (filters.dateTo) n += 1;
+    if (filters.paymentMethod !== "all") n += 1;
+    return n;
+  }, [filters]);
+
+  const hasAnyFilterActive = useMemo(
+    () =>
+      Object.keys(DEFAULT_TRANSACTION_FILTERS).some(
+        (key) => filters[key] !== DEFAULT_TRANSACTION_FILTERS[key]
+      ),
+    [filters]
+  );
 
   const handleEdit = (transaction) => {
     if (userRole !== "admin") {
@@ -68,62 +110,185 @@ const TransactionList = () => {
     <div className="transaction-section">
       <h2 className="section-title">📝 Transactions</h2>
 
-      {/* Filters part */}  
-      <div className="filters-container">
-        <div className="filter-group">
-          <label htmlFor="search">🔍 Search</label>
-          <input
-            id="search"
-            type="text"
-            placeholder="Search by description or category..."
-            value={filters.searchTerm}
-            onChange={(e) => updateFilters({ searchTerm: e.target.value })}
-            className="filter-input"
-          />
+      <div className="filters-section">
+        <div className="filters-section-header">
+          <h3 className="filters-section-title">Filters</h3>
+          {hasAnyFilterActive && (
+            <button
+              type="button"
+              className="filters-clear-all"
+              onClick={() => resetFilters()}
+            >
+              Clear all
+            </button>
+          )}
         </div>
 
-        <div className="filter-group">
-          <label htmlFor="category">📂 Category</label>
-          <select
-            id="category"
-            value={filters.category}
-            onChange={(e) => updateFilters({ category: e.target.value })}
-            className="filter-select"
-          >
-            <option value="all">All Categories</option>
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
+        <div className="filters-container">
+          <div className="filter-group">
+            <label htmlFor="search">🔍 Search</label>
+            <input
+              id="search"
+              type="text"
+              placeholder="Description or category…"
+              value={filters.searchTerm}
+              onChange={(e) => updateFilters({ searchTerm: e.target.value })}
+              className="filter-input"
+            />
+          </div>
+
+          <div className="filter-group">
+            <label htmlFor="category">📂 Category</label>
+            <select
+              id="category"
+              value={filters.category}
+              onChange={(e) => updateFilters({ category: e.target.value })}
+              className="filter-select"
+            >
+              <option value="all">All categories</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label htmlFor="type">💳 Type</label>
+            <select
+              id="type"
+              value={filters.type}
+              onChange={(e) => updateFilters({ type: e.target.value })}
+              className="filter-select"
+            >
+              <option value="all">All types</option>
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label htmlFor="month">📅 Month</label>
+            <select
+              id="month"
+              value={filters.monthFilter}
+              onChange={(e) => updateFilters({ monthFilter: e.target.value })}
+              className="filter-select"
+            >
+              <option value="all">All months</option>
+              <option value="thisMonth">This month</option>
+              <option value="previousMonth">Previous month</option>
+              {availableMonths.length > 0 && (
+                <optgroup label="Months in your data">
+                  {availableMonths.map((ym) => (
+                    <option key={ym} value={ym}>
+                      {formatYearMonthLabel(ym)}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+            </select>
+          </div>
         </div>
 
-        <div className="filter-group">
-          <label htmlFor="type">💳 Type</label>
-          <select
-            id="type"
-            value={filters.type}
-            onChange={(e) => updateFilters({ type: e.target.value })}
-            className="filter-select"
-          >
-            <option value="all">All Types</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
-        </div>
+        <button
+          type="button"
+          className={`advanced-filters-toggle ${advancedOpen ? "is-open" : ""}`}
+          onClick={() => setAdvancedOpen((o) => !o)}
+          aria-expanded={advancedOpen}
+        >
+          <span>Advanced filters</span>
+          {advancedActiveCount > 0 && (
+            <span className="filter-active-badge">{advancedActiveCount}</span>
+          )}
+          <span className="advanced-filters-chevron" aria-hidden>
+            ▼
+          </span>
+        </button>
 
-        <div className="filter-group">
-          <label htmlFor="month">📅 Month</label>
-          <select
-            id="month"
-            value={filters.monthFilter}
-            onChange={(e) => updateFilters({ monthFilter: e.target.value })}
-            className="filter-select"
-          >
-            <option value="all">All Months</option>
-            <option value="thisMonth">This Month</option>
-            <option value="previousMonth">Previous Month</option>
-          </select>
-        </div>
+        {advancedOpen && (
+          <div className="advanced-filters-panel">
+            <p className="advanced-filters-hint">
+              Narrow further by amount, custom date range, or payment method. These combine with the
+              filters above.
+            </p>
+            <div className="advanced-filters-grid">
+              <div className="filter-group">
+                <label htmlFor="amount-min">Min amount (₹)</label>
+                <input
+                  id="amount-min"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="No minimum"
+                  value={filters.amountMin}
+                  onChange={(e) => updateFilters({ amountMin: e.target.value })}
+                  className="filter-input"
+                />
+              </div>
+              <div className="filter-group">
+                <label htmlFor="amount-max">Max amount (₹)</label>
+                <input
+                  id="amount-max"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="No maximum"
+                  value={filters.amountMax}
+                  onChange={(e) => updateFilters({ amountMax: e.target.value })}
+                  className="filter-input"
+                />
+              </div>
+              <div className="filter-group">
+                <label htmlFor="date-from">From date</label>
+                <input
+                  id="date-from"
+                  type="date"
+                  value={filters.dateFrom}
+                  onChange={(e) => updateFilters({ dateFrom: e.target.value })}
+                  className="filter-input"
+                />
+              </div>
+              <div className="filter-group">
+                <label htmlFor="date-to">To date</label>
+                <input
+                  id="date-to"
+                  type="date"
+                  value={filters.dateTo}
+                  onChange={(e) => updateFilters({ dateTo: e.target.value })}
+                  className="filter-input"
+                />
+              </div>
+              <div className="filter-group filter-group-span-2">
+                <label htmlFor="payment-method">Payment method</label>
+                <select
+                  id="payment-method"
+                  value={filters.paymentMethod}
+                  onChange={(e) => updateFilters({ paymentMethod: e.target.value })}
+                  className="filter-select"
+                >
+                  <option value="all">All methods</option>
+                  {paymentMethods.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="advanced-filters-actions">
+              <button
+                type="button"
+                className="advanced-filters-clear-btn"
+                onClick={() => resetFilters()}
+                disabled={!hasAnyFilterActive}
+              >
+                Clear all filters
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
 
@@ -169,9 +334,9 @@ const TransactionList = () => {
                 <th>📝 Description</th>
                 <th>📂 Category</th>
                 <th onClick={() => toggleSort('amount')} className="sortable">
-                  💵 Amount {sortBy === "amount" && (sortOrder === "asc" ? "↑" : "↓")}
+                  ₹ Amount {sortBy === "amount" && (sortOrder === "asc" ? "↑" : "↓")}
                 </th>
-                <th>📊 Type</th>
+                <th>💳 Type</th>
                 {userRole === "admin" && <th>⚙️ Actions</th>}
               </tr>
             </thead>

@@ -18,7 +18,7 @@ const InsightsSection = () => {
         prev.value > current.value ? prev : current
       );
       insights.push({
-        icon: "🏆",
+        icon: "↑",
         title: "Highest Spending",
         description: `${highestCategory.name} is your top expense category at ₹${highestCategory.value.toFixed(2)}`,
         color: "#ea0b0b"
@@ -30,7 +30,7 @@ const InsightsSection = () => {
       const savingsRate = ((totalIncome - totalExpenses) / totalIncome * 100).toFixed(1);
       if (totalIncome > totalExpenses) {
         insights.push({
-          icon: "💚",
+          icon: "✅",
           title: "Great Savings Rate",
           description: `You're saving ${savingsRate}% of your income. Keep it up! 🎯`,
           color: "#4ECDC4"
@@ -49,7 +49,7 @@ const InsightsSection = () => {
     if (transactions.length > 0) {
       const avgAmount = transactions.reduce((sum, tx) => sum + tx.amount, 0) / transactions.length;
       insights.push({
-        icon: "📊",
+        icon: "≈",
         title: "Average Transaction",
         description: `Your average transaction amount is ₹${avgAmount.toFixed(2)}`,
         color: "#45B7D1"
@@ -65,7 +65,7 @@ const InsightsSection = () => {
 
     if (recentTransactions.length > 0) {
       insights.push({
-        icon: "📅",
+        icon: "R•",
         title: "Recent Activity",
         description: `You had ${recentTransactions.length} transaction(s) in the last 7 days`,
         color: "#F7DC6F"
@@ -76,7 +76,7 @@ const InsightsSection = () => {
     if (totalExpenses > 0) {
       const avgDaily = (totalExpenses / Math.max(1, transactions.filter(t => t.type === 'expense').length)).toFixed(2);
       insights.push({
-        icon:"💸",
+        icon:"D•",
         title: "Daily Average Spending",
         description: `You spend an average of ₹${avgDaily} per transaction`,
         color: "#BB8FCE"
@@ -109,14 +109,14 @@ const InsightsSection = () => {
       const expenseChange = prevMonthExpenses > 0 ? ((thisMonthExpenses - prevMonthExpenses) / prevMonthExpenses * 100).toFixed(1) : 0;
 
       let comparisonText = '';
-      let icon = "📈";
+      let icon = "↔";
       let color = "#4ECDC4";
 
       if (thisMonthIncome > prevMonthIncome && thisMonthExpenses <= prevMonthExpenses) {
         comparisonText = `Income up ${incomeChange}%, expenses stable/down. Great progress!`;
       } else if (thisMonthIncome < prevMonthIncome) {
         comparisonText = `Income up ${Math.abs(incomeChange)}% from last month.`;
-        icon = "📈";
+        icon = "M↔";
         color = "#18ea29";
       } else if (thisMonthExpenses > prevMonthExpenses) {
         comparisonText = `Expenses up ${expenseChange}% from last month.`;
@@ -141,7 +141,7 @@ const InsightsSection = () => {
 
   return (
     <div className="insights-section">
-      <h2 className="section-title">💡 Insights & Analytics</h2>
+      <h2 className="section-title">📊 Insights & Analytics</h2>
       
       {insights.length > 0 ? (
         <div className="insights-grid">
@@ -167,7 +167,7 @@ const InsightsSection = () => {
 
 
       <div className="quick-stats">
-        <h3>📈 Quick Overview</h3>
+        <h3>✔️→ Quick Overview</h3>
         <div className="stats-grid">
           <div className="stat-box">
             <span className="stat-label">Total Transactions</span>

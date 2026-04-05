@@ -46,6 +46,10 @@
   margin: 0;
 }
 
+[data-theme="dark"] .insight-title {
+  color: #ffffff;
+}
+
 .insight-description {
   font-size: 0.9rem;
   color: #666;
@@ -77,6 +81,10 @@
   font-size: 1.2rem;
   color: #333;
   font-weight: 600;
+}
+
+[data-theme="dark"] .quick-stats h3 {
+  color: #ffffff;
 }
 
 .stats-grid {

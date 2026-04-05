@@ -12,7 +12,7 @@ const SummaryCards = () => {
       id: "balance",
       title: "Total Balance",
       amount: totalBalance,
-      icon: "💰",
+      icon: "₹",
       color: "blue",
       bgColor: "#e3f2fd"
     },

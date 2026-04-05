@@ -19,6 +19,117 @@
   border-color: #333;
 }
 
+[data-theme="dark"] .chart-title {
+  color: #e8e8ef;
+}
+
+[data-theme="dark"] .chart-subtitle {
+  color: #8b90a8;
+}
+
+.balance-trend-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.balance-trend-title-block {
+  flex: 1;
+  min-width: 200px;
+}
+
+.chart-title.balance-trend-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 6px 0;
+}
+
+.chart-title-rupee {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #1b5e20;
+  background: linear-gradient(145deg, #e8f5e9 0%, #c8e6c9 100%);
+  border: 1px solid rgba(46, 125, 50, 0.25);
+  box-shadow: 0 1px 3px rgba(46, 125, 50, 0.12);
+}
+
+[data-theme="dark"] .chart-title-rupee {
+  color: #a5d6a7;
+  background: rgba(46, 125, 50, 0.2);
+  border-color: rgba(165, 214, 167, 0.35);
+  box-shadow: none;
+}
+
+.balance-trend-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.balance-trend-filter-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #888;
+  margin: 0;
+}
+
+[data-theme="dark"] .balance-trend-filter-label {
+  color: #9aa0b4;
+}
+
+.balance-trend-select {
+  min-width: 200px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.balance-trend-select:hover {
+  border-color: #bdbdbd;
+}
+
+.balance-trend-select:focus {
+  outline: none;
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+}
+
+[data-theme="dark"] .balance-trend-select {
+  color: #e8e8ef;
+  background: #252536;
+  border-color: #3d3d52;
+}
+
+[data-theme="dark"] .balance-trend-select:hover {
+  border-color: #5a5a72;
+}
+
+[data-theme="dark"] .balance-trend-select:focus {
+  border-color: #66bb6a;
+  box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.2);
+}
+
 .chart-title {
   font-size: 1.3rem;
   font-weight: 600;
@@ -118,6 +229,15 @@
 
   .chart-title {
     font-size: 1.1rem;
+  }
+
+  .balance-trend-heading {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .balance-trend-select {
+    min-width: 100%;
   }
 
   .category-breakdown {
