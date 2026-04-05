@@ -1,0 +1,144 @@
+.charts-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-bottom: 20px;
+}
+
+.chart-box {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+}
+
+[data-theme="dark"] .chart-box {
+  background: #1a1a2e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border-color: #333;
+}
+
+.chart-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
+.chart-subtitle {
+  font-size: 0.85rem;
+  color: #999;
+  margin: 0 0 20px 0;
+  font-style: italic;
+}
+
+.no-data {
+  text-align: center;
+  color: #999;
+  padding: 40px 20px;
+  font-size: 0.95rem;
+}
+
+.category-breakdown {
+  display: flex;
+  gap: 30px;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 0 0 200px;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  background: #f9f9f9;
+}
+
+.category-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.category-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  gap: 10px;
+}
+
+.category-name {
+  font-size: 0.85rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.category-amount {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #667eea;
+}
+
+
+.recharts-wrapper {
+  outline: none;
+}
+
+.recharts-tooltip {
+  outline: none;
+}
+
+@media (max-width: 1024px) {
+  .charts-container {
+    grid-template-columns: 1fr;
+  }
+
+  .category-breakdown {
+    flex-direction: column;
+  }
+
+  .category-list {
+    flex: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .chart-box {
+    padding: 15px;
+  }
+
+  .chart-title {
+    font-size: 1.1rem;
+  }
+
+  .category-breakdown {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-box {
+    padding: 12px;
+  }
+
+  .chart-title {
+    font-size: 1rem;
+  }
+
+  .category-breakdown {
+    gap: 10px;
+  }
+
+  .category-list {
+    max-width: 100%;
+  }
+}
