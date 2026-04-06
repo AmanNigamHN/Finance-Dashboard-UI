@@ -93,8 +93,12 @@ const Header = () => {
                 className="header-btn cta-btn"
                 onClick={() => {
                   const el = document.querySelector(".transaction-section");
-                  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                  setMobileMenuOpen(false);
+                  if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }
+                  setTimeout(() => {
+                    setMobileMenuOpen(false);
+                  }, 100);
                 }}
               >
                 <IconPlus />
@@ -107,7 +111,12 @@ const Header = () => {
             <button
               type="button"
               className="header-btn dark-mode-btn"
-              onClick={() => setIsDarkMode(!isDarkMode)}
+              onClick={() => {
+                setIsDarkMode(!isDarkMode);
+                setTimeout(() => {
+                  setMobileMenuOpen(false);
+                }, 100);
+              }}
               aria-pressed={isDarkMode}
               title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
             >

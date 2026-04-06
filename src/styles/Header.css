@@ -399,27 +399,32 @@
 
   .header-toolbar {
     order: 3;
-    position: relative;
-    z-index: 1000;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
     width: 100%;
+    z-index: 2000;
     flex-direction: column;
     align-items: stretch;
-    gap: 8px;
+    gap: 12px;
     padding: 0;
     margin: 0;
     max-height: 0;
     overflow: hidden;
-    opacity: 0;
-    transition:
-      max-height 0.35s ease,
-      opacity 0.25s ease,
-      padding 0.35s ease;
+    background: linear-gradient(125deg, #0a8f5c 0%, #1a9d7a 38%, #0d8a82 100%);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transition: max-height 0.35s ease, padding 0.35s ease;
+  }
+
+  [data-theme="dark"] .header-toolbar {
+    background: linear-gradient(125deg, #12182a 0%, #1a2344 45%, #0f1729 100%);
   }
 
   .header-toolbar.active {
-    max-height: 280px;
-    opacity: 1;
-    padding-top: 4px;
+    max-height: 400px;
+    padding: 16px 12px;
+    overflow: visible;
   }
 
   .header-left-actions,
@@ -427,23 +432,60 @@
     width: 100%;
     flex-direction: column;
     margin-left: 0;
+    gap: 10px;
   }
 
   .header-btn {
     width: 100%;
     justify-content: center;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.18) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    cursor: pointer;
+  }
+
+  .header-btn:hover {
+    background: rgba(255, 255, 255, 0.28) !important;
+  }
+
+  .cta-btn {
+    background: #fff !important;
+    color: #06724a !important;
+  }
+
+  .cta-btn:hover {
+    background: #f8fffc !important;
+  }
+
+  [data-theme="dark"] .cta-btn {
+    background: #e8fff4 !important;
+    color: #0a3d2e !important;
+  }
+
+  [data-theme="dark"] .cta-btn:hover {
+    background: #fff !important;
   }
 
   .menu-close-btn {
     display: inline-flex;
+    padding: 10px 14px;
+    background: rgba(255, 100, 100, 0.25) !important;
+    border: 1px solid rgba(255, 100, 100, 0.4) !important;
+  }
+
+  .menu-close-btn:hover {
+    background: rgba(255, 100, 100, 0.35) !important;
   }
 
   .menu-overlay {
     display: block;
     position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(2px);
-    z-index: 999;
+    top: 470px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1999;
+    pointer-events: auto;
   }
 }
